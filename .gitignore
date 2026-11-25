@@ -5,6 +5,9 @@
 [Ll]og/
 [Ll]ogs/
 
+# Временные проекты WPF, создаваемые при сборке
+*_wpftmp.csproj
+
 # Visual Studio
 .vs/
 *.user

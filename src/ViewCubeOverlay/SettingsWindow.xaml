@@ -3,28 +3,40 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:local="clr-namespace:ViewCubeOverlay"
         Title="Настройки видового куба"
-        Width="360"
-        Height="560"
-        MinWidth="320"
-        MinHeight="420"
+        Width="500"
+        Height="680"
+        MinWidth="390"
+        MinHeight="480"
         WindowStyle="ToolWindow"
         ShowInTaskbar="False"
         ResizeMode="CanResizeWithGrip"
-        Background="#F2F2F2"
+        Background="#F4F6F9"
         UseLayoutRounding="True">
-  <DockPanel Margin="10">
-    <TextBlock DockPanel.Dock="Top" FontSize="13" FontWeight="SemiBold" Margin="0,0,0,8"
-               Text="Внешний вид куба"/>
-    <TextBlock DockPanel.Dock="Bottom" FontSize="10" Foreground="#666" Margin="0,8,0,0"
-               Text="Разработчик: Гаряев Иван Иванович"/>
-    <StackPanel DockPanel.Dock="Bottom" Orientation="Horizontal" HorizontalAlignment="Right" Margin="0,8,0,0">
-      <Button x:Name="CloseButton" Content="Закрыть" Width="88" Height="26" IsDefault="True"
-              Click="CloseButton_Click"/>
+  <Window.Resources>
+    <Style TargetType="TextBlock"><Setter Property="Foreground" Value="#263548"/></Style>
+    <Style TargetType="Button">
+      <Setter Property="Background" Value="White"/><Setter Property="Foreground" Value="#263548"/>
+      <Setter Property="BorderBrush" Value="#D5DEE9"/>
+      <Setter Property="Cursor" Value="Hand"/>
+    </Style>
+    <Style TargetType="CheckBox"><Setter Property="Foreground" Value="#263548"/><Setter Property="Margin" Value="0,4,0,12"/></Style>
+    <Style TargetType="TabItem"><Setter Property="Padding" Value="17,9"/><Setter Property="FontSize" Value="13"/></Style>
+  </Window.Resources>
+  <DockPanel Margin="20,16,20,16">
+    <StackPanel DockPanel.Dock="Top" Margin="0,0,0,14">
+      <TextBlock Text="Видовой куб" FontSize="21" FontWeight="SemiBold"/>
+      <TextBlock Text="Настройте удобный вид для работы в Renga" Foreground="#63758A" Margin="0,3,0,0"/>
     </StackPanel>
-
-    <ScrollViewer VerticalScrollBarVisibility="Auto">
-      <StackPanel>
-        <TextBlock Text="Пресет" FontWeight="SemiBold" Margin="0,0,0,4"/>
+    <Grid DockPanel.Dock="Bottom" Margin="0,14,0,0">
+      <TextBlock Text="Изменения применяются сразу" Foreground="#63758A" VerticalAlignment="Center"/>
+      <Button x:Name="CloseButton" Content="Закрыть" Width="104" Height="34" HorizontalAlignment="Right"
+              IsDefault="True" Click="CloseButton_Click"/>
+    </Grid>
+    <TabControl Background="White" BorderBrush="#DDE4ED">
+      <TabItem Header="Настройки">
+        <ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled">
+          <StackPanel Margin="18,18,18,16">
+        <TextBlock Text="Готовые стили" FontWeight="SemiBold" Margin="0,0,0,4"/>
         <UniformGrid Columns="2" Margin="0,0,0,10">
           <Button x:Name="PresetClassic" Content="Классика" Margin="0,0,4,4" Height="26"
                   Click="PresetClassic_Click" ToolTip="Steel-blue / indian-red / gainsboro"/>
@@ -37,7 +49,7 @@
                   ToolTip="Навигационный куб Renga: фаски, светло-серый, подписи без плашки"/>
         </UniformGrid>
 
-        <TextBlock Text="Цвета граней" FontWeight="SemiBold" Margin="0,0,0,4"/>
+        <Separator Margin="0,8,0,14"/><TextBlock Text="Цвета граней" FontWeight="SemiBold" Margin="0,0,0,4"/>
         <Grid Margin="0,0,0,10">
           <Grid.ColumnDefinitions>
             <ColumnDefinition Width="88"/>
@@ -65,7 +77,7 @@
           <local:ColorField x:Name="FaceRight" Grid.Row="5" Grid.Column="1" Margin="0,2"/>
         </Grid>
 
-        <TextBlock Text="Подписи" FontWeight="SemiBold" Margin="0,0,0,4"/>
+        <Separator Margin="0,8,0,14"/><TextBlock Text="Подписи" FontWeight="SemiBold" Margin="0,0,0,4"/>
         <Grid Margin="0,0,0,6">
           <Grid.ColumnDefinitions>
             <ColumnDefinition Width="88"/>
@@ -83,7 +95,7 @@
         <CheckBox x:Name="ShowLabels" Content="Показывать подписи на гранях"
                   Margin="0,0,0,10" Click="Option_Changed"/>
 
-        <TextBlock Text="Куб" FontWeight="SemiBold" Margin="0,0,0,4"/>
+        <Separator Margin="0,8,0,14"/><TextBlock Text="Подсветка куба" FontWeight="SemiBold" Margin="0,0,0,4"/>
         <Grid Margin="0,0,0,10">
           <Grid.ColumnDefinitions>
             <ColumnDefinition Width="88"/>
@@ -104,7 +116,7 @@
           <local:ColorField x:Name="ActiveFaceColor" Grid.Row="2" Grid.Column="1" Margin="0,2"/>
         </Grid>
 
-        <TextBlock Text="Окно" FontWeight="SemiBold" Margin="0,0,0,4"/>
+        <Separator Margin="0,8,0,14"/><TextBlock Text="Размер и окно" FontWeight="SemiBold" Margin="0,0,0,4"/>
         <CheckBox x:Name="CompactChrome" Content="Компактный заголовок"
                   Margin="0,0,0,8" Click="Option_Changed"/>
         <DockPanel Margin="0,0,0,4">
@@ -117,7 +129,27 @@
         <TextBlock FontSize="10" Foreground="#666"
                    Text="Колёсико мыши над кубом или кнопки +/− рядом с Home."
                    TextWrapping="Wrap"/>
-      </StackPanel>
-    </ScrollViewer>
+          </StackPanel>
+        </ScrollViewer>
+      </TabItem>
+      <TabItem Header="О плагине">
+        <ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled">
+          <StackPanel Margin="22,22,22,24">
+            <TextBlock Text="Видовой куб для Renga" FontSize="19" FontWeight="SemiBold" TextWrapping="Wrap"/>
+            <TextBlock Text="Навигация по 3D-модели" Foreground="#63758A" Margin="0,5,0,18"/>
+            <TextBlock Text="Плавающий куб помогает управлять направлением камеры: выберите грань, ребро или угол, чтобы повернуть 3D-вид. Кнопка «Домой» возвращает изометрический вид." TextWrapping="Wrap" LineHeight="21"/>
+            <Separator Margin="0,20,0,18"/>
+            <TextBlock Text="РАЗРАБОТЧИК" FontSize="11" FontWeight="SemiBold" Foreground="#63758A"/>
+            <TextBlock Text="Гаряев Иван Иванович" FontSize="14" Margin="0,5,0,18"/>
+            <TextBlock Text="ВЕРСИЯ" FontSize="11" FontWeight="SemiBold" Foreground="#63758A"/>
+            <TextBlock x:Name="VersionText" FontSize="14" Margin="0,5,0,18"/>
+            <TextBlock Text="РЕПОЗИТОРИЙ ПРОЕКТА" FontSize="11" FontWeight="SemiBold" Foreground="#63758A"/>
+            <TextBlock Margin="0,5,0,4" TextWrapping="Wrap">
+              <Hyperlink NavigateUri="https://github.com/Garyaev-dev/Renga-View-Cube" RequestNavigate="Repository_RequestNavigate">github.com/Garyaev-dev/Renga-View-Cube</Hyperlink>
+            </TextBlock>
+          </StackPanel>
+        </ScrollViewer>
+      </TabItem>
+    </TabControl>
   </DockPanel>
 </Window>

@@ -270,9 +270,7 @@ namespace ViewCubeOverlay
       if (m_window == null || m_settings == null)
         return;
 
-      m_window.WriteDockTo(m_settings);
-      m_settings.UserWantsWindow = m_userWantsWindow;
-      m_settings.Save();
+      PersistSettings();
     }
 
     private void PersistSettings()
