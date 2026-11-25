@@ -6,7 +6,7 @@
 **Версия:** 1.5.2.0  
 **Тип плагина:** Net8
 
-Версия в `ViewCubeOverlay.rndesc` записана четырьмя числами (`1.5.2.0`). Так и должно оставаться: Renga не принимает версию из трёх частей.
+Версия в `src\ViewCubeOverlay\ViewCubeOverlay.rndesc` записана четырьмя числами (`1.5.2.0`). Так и должно оставаться: Renga не принимает версию из трёх частей.
 
 ## Как это работает
 
@@ -21,26 +21,59 @@
 - Renga с API **2.48** или новее (`RequiredAPIVersion` в `ViewCubeOverlay.rndesc`).
 - Плагин типа **Net8** (не .NET Framework).
 - Для запуска собранного плагина на компьютере нужен **.NET 8** (целевая платформа проекта — `net8.0-windows`, x64).
+- Для сборки — Visual Studio с MSBuild и поддержкой WPF. Команда `dotnet build` этот проект не собирает: ссылка на `RengaCOMAPI.tlb` — это COM-ссылка.
 
-Сборка из этих исходников рассчитана на каталог примеров Renga SDK: проект ссылается на `Renga.NET8.PluginUtility.dll` и `RengaCOMAPI.tlb` относительно SDK. В этот репозиторий входит только проект плагина, без самой Renga и без SDK.
+Проект самостоятельный. Его решение — `ViewCube.sln` в корне этого репозитория. Оно не входит в `Samples.sln` Renga SDK и не требует, чтобы исходники лежали в каталоге примеров SDK.
+
+## Сборка
+
+1. Положите в папку `lib` два файла из установленного Renga SDK. В репозиторий они не входят: это файлы Renga Software, а не исходники плагина.
+
+```text
+lib\Renga.NET8.PluginUtility.dll    из <Renga SDK>\Net\
+lib\RengaCOMAPI.tlb                 из <Renga SDK>\tlb\
+```
+
+Каталог по умолчанию задаёт свойство `RengaSdkLib` в `Directory.Build.props` — папка `lib` рядом с `ViewCube.sln`. Другой путь можно передать сборке: `/p:RengaSdkLib=C:\путь\к\папке\`.
+
+2. Соберите `ViewCube.sln` в конфигурации Release, платформа x64, через MSBuild Visual Studio:
+
+```text
+MSBuild.exe ViewCube.sln /restore /p:Configuration=Release /p:Platform=x64
+```
+
+Готовые файлы плагина появляются в `bin\Release\ViewCubeOverlay\`: `ViewCubeOverlay.dll`, `ViewCubeOverlay.deps.json`, `ViewCubeOverlay.rndesc`, `icon.png` и служебные DLL сборки (`Interop.Renga.dll`, `Renga.NET8.PluginUtility.dll`). Папку `obfuscated` в каталог плагинов копировать не нужно. Если на машине есть пакет Obfuscar, сборка Release подменяет `ViewCubeOverlay.dll` обфусцированной копией; если пакета нет, в выход попадает обычная Release-сборка.
 
 ## Установка
 
-1. Соберите проект в конфигурации Release, платформа x64.
-2. Возьмите папку готового плагина: `ViewCubeOverlay.dll`, `ViewCubeOverlay.rndesc`, `icon.png` и зависимости сборки (в том числе `ViewCubeOverlay.deps.json` и служебные DLL, которые кладёт сборка).
-3. Скопируйте эту папку в каталог плагинов своей Renga:
+Скопируйте файлы из `bin\Release\ViewCubeOverlay\` (без папки `obfuscated`) в каталог плагинов своей Renga:
 
 ```text
 <папка установки Renga>\Plugins\ViewCubeOverlay\
 ```
 
-4. Перезапустите Renga. В 3D-виде нажмите «Видовой куб (окно)».
+Перезапустите Renga. В 3D-виде нажмите «Видовой куб (окно)».
+
+Чтобы MSBuild сам скопировал эти файлы, передайте каталог:
+
+```text
+/p:RengaPluginDeployDir=<папка установки Renga>\Plugins\ViewCubeOverlay\
+```
 
 В репозитории лежат исходники. Готовые файлы из папки `Plugins` установленной Renga сюда не входят.
 
-## Состав проекта
+## Состав
 
-Исходники окна и куба (C# / XAML), описание плагина `ViewCubeOverlay.rndesc`, значок `icon.png`, настройки обфускации `Obfuscar.xml`, заметки по разработке `PLAN.md`.
+```text
+ViewCube.sln
+Directory.Build.props
+README.md
+TERMS.md
+src\ViewCubeOverlay\    проект плагина: C# / XAML, ViewCubeOverlay.rndesc, icon.png
+lib\                    справочные файлы SDK для сборки (см. выше)
+```
+
+Сборка и имя сборки остаются `ViewCubeOverlay`, поэтому имя установленного плагина не меняется.
 
 ## Условия использования
 

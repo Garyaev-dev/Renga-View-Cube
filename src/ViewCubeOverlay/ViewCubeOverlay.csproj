@@ -10,7 +10,7 @@
     <AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
     <AppendRuntimeIdentifierToOutputPath>false</AppendRuntimeIdentifierToOutputPath>
     <AppendPlatformToOutputPath>false</AppendPlatformToOutputPath>
-    <OutputPath>..\bin\$(Configuration)\$(AssemblyName)\</OutputPath>
+    <OutputPath>..\..\bin\$(Configuration)\$(AssemblyName)\</OutputPath>
     <RootNamespace>ViewCubeOverlay</RootNamespace>
     <AssemblyName>ViewCubeOverlay</AssemblyName>
     <Authors>Гаряев Иван Иванович</Authors>
@@ -18,7 +18,6 @@
     <Copyright>Copyright © Гаряев Иван Иванович</Copyright>
     <Description>Видовой куб — плавающее окно с 3D-кубом поверх интерфейса Renga. Разработчик: Гаряев Иван Иванович.</Description>
     <Version>1.5.2</Version>
-    <RengaPluginDeployDir>$(MSBuildThisFileDirectory)..\..\..\..\Plugins\ViewCubeOverlay\</RengaPluginDeployDir>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)' == 'Release'">
@@ -49,16 +48,16 @@
 
   <ItemGroup>
     <Reference Include="Renga.NET8.PluginUtility">
-      <HintPath>..\..\..\Net\Renga.NET8.PluginUtility.dll</HintPath>
+      <HintPath>$(RengaSdkLib)Renga.NET8.PluginUtility.dll</HintPath>
     </Reference>
-    <COMFileReference Include="..\..\..\tlb\RengaCOMAPI.tlb" />
+    <COMFileReference Include="$(RengaSdkLib)RengaCOMAPI.tlb" />
   </ItemGroup>
 
   <Target Name="PackReleasePlugin" AfterTargets="Build"
           Condition="'$(Configuration)' == 'Release' And '$(DesignTimeBuild)' != 'true'">
     <PropertyGroup>
       <_ObfDll>$(OutputPath)obfuscated\ViewCubeOverlay.dll</_ObfDll>
-      <_DeployDir>$([System.IO.Path]::GetFullPath('$(RengaPluginDeployDir)'))</_DeployDir>
+      <_DeployDir Condition="'$(RengaPluginDeployDir)' != ''">$([System.IO.Path]::GetFullPath('$(RengaPluginDeployDir)'))</_DeployDir>
     </PropertyGroup>
 
     <MakeDir Directories="$(OutputPath)obfuscated" Condition="Exists('$(Obfuscar)')" />
@@ -80,7 +79,7 @@
              Importance="high"
              Condition="'$(ObfuscarExitCode)' == '0' And Exists('$(_ObfDll)')" />
 
-    <ItemGroup>
+    <ItemGroup Condition="'$(_DeployDir)' != ''">
       <_DeployFiles Include="$(OutputPath)ViewCubeOverlay.dll" />
       <_DeployFiles Include="$(OutputPath)ViewCubeOverlay.deps.json" />
       <_DeployFiles Include="$(OutputPath)ViewCubeOverlay.rndesc" />
@@ -88,15 +87,17 @@
       <_DeployFiles Include="$(OutputPath)Renga.NET8.PluginUtility.dll" Condition="Exists('$(OutputPath)Renga.NET8.PluginUtility.dll')" />
       <_DeployFiles Include="$(OutputPath)Interop.Renga.dll" Condition="Exists('$(OutputPath)Interop.Renga.dll')" />
     </ItemGroup>
-    <MakeDir Directories="$(_DeployDir)" />
-    <Copy SourceFiles="@(_DeployFiles)" DestinationFolder="$(_DeployDir)" SkipUnchangedFiles="false" OverwriteReadOnlyFiles="true" />
+    <MakeDir Directories="$(_DeployDir)" Condition="'$(_DeployDir)' != ''" />
+    <Copy SourceFiles="@(_DeployFiles)" DestinationFolder="$(_DeployDir)" SkipUnchangedFiles="false" OverwriteReadOnlyFiles="true"
+          Condition="'$(_DeployDir)' != ''" />
     <Delete Files="$(_DeployDir)ViewCubeOverlay.pdb"
-            Condition="Exists('$(_DeployDir)ViewCubeOverlay.pdb')" />
+            Condition="'$(_DeployDir)' != '' And Exists('$(_DeployDir)ViewCubeOverlay.pdb')" />
     <Delete Files="$(_DeployDir)PLAN.md"
-            Condition="Exists('$(_DeployDir)PLAN.md')" />
+            Condition="'$(_DeployDir)' != '' And Exists('$(_DeployDir)PLAN.md')" />
     <Delete Files="$(_DeployDir)Obfuscar.xml"
-            Condition="Exists('$(_DeployDir)Obfuscar.xml')" />
-    <Message Text="Deployed Release plugin to $(_DeployDir)" Importance="high" />
+            Condition="'$(_DeployDir)' != '' And Exists('$(_DeployDir)Obfuscar.xml')" />
+    <Message Text="Deployed Release plugin to $(_DeployDir)" Importance="high"
+             Condition="'$(_DeployDir)' != ''" />
   </Target>
 
 </Project>
