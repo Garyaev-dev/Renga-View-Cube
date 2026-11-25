@@ -1,13 +1,14 @@
 using System;
+using System.Diagnostics;
 using System.Windows;
+using System.Windows.Navigation;
 
 namespace ViewCubeOverlay
 {
   public partial class SettingsWindow : Window
   {
     private readonly ViewCubeSettings m_settings;
-    private bool _updating;
-    private bool _wired;
+    private bool _updating = true;
 
     public event EventHandler SettingsChanged;
     public event EventHandler ScaleChanged;
@@ -16,6 +17,7 @@ namespace ViewCubeOverlay
     {
       m_settings = settings ?? new ViewCubeSettings();
       InitializeComponent();
+      VersionText.Text = typeof(SettingsWindow).Assembly.GetName().Version?.ToString() ?? "—";
       LoadFromSettings();
       WireColorFields();
     }
@@ -50,20 +52,12 @@ namespace ViewCubeOverlay
 
     private void WireColorFields()
     {
-      if (_wired)
-        return;
-      _wired = true;
-      FaceTop.ColorChanged += ColorField_Changed;
-      FaceBottom.ColorChanged += ColorField_Changed;
-      FaceFront.ColorChanged += ColorField_Changed;
-      FaceBack.ColorChanged += ColorField_Changed;
-      FaceLeft.ColorChanged += ColorField_Changed;
-      FaceRight.ColorChanged += ColorField_Changed;
-      LabelText.ColorChanged += ColorField_Changed;
-      LabelPill.ColorChanged += ColorField_Changed;
-      HotspotColor.ColorChanged += ColorField_Changed;
-      HoverColor.ColorChanged += ColorField_Changed;
-      ActiveFaceColor.ColorChanged += ColorField_Changed;
+      foreach (var field in new[]
+      {
+        FaceTop, FaceBottom, FaceFront, FaceBack, FaceLeft, FaceRight,
+        LabelText, LabelPill, HotspotColor, HoverColor, ActiveFaceColor
+      })
+        field.ColorChanged += ColorField_Changed;
     }
 
     private void PresetClassic_Click(object sender, RoutedEventArgs e)
@@ -120,6 +114,20 @@ namespace ViewCubeOverlay
       ScaleValue.Text = m_settings.CubeScale.ToString("0.00");
       m_settings.Save();
       ScaleChanged?.Invoke(this, EventArgs.Empty);
+    }
+
+    private void Repository_RequestNavigate(object sender, RequestNavigateEventArgs e)
+    {
+      try
+      {
+        Process.Start(new ProcessStartInfo(e.Uri.AbsoluteUri) { UseShellExecute = true });
+        e.Handled = true;
+      }
+      catch (Exception)
+      {
+        MessageBox.Show(this, "Не удалось открыть ссылку. Адрес репозитория: " + e.Uri.AbsoluteUri,
+                        "Видовой куб", MessageBoxButton.OK, MessageBoxImage.Information);
+      }
     }
 
     private void CloseButton_Click(object sender, RoutedEventArgs e)
