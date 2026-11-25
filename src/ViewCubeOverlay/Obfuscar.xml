@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <Obfuscator>
-  <Var name="InPath" value="..\bin\Release\ViewCubeOverlay" />
-  <Var name="OutPath" value="..\bin\Release\ViewCubeOverlay\obfuscated" />
+  <Var name="InPath" value="..\..\bin\Release\ViewCubeOverlay" />
+  <Var name="OutPath" value="..\..\bin\Release\ViewCubeOverlay\obfuscated" />
   <Var name="KeepPublicApi" value="true" />
   <Var name="HidePrivateApi" value="true" />
   <Var name="RenameProperties" value="true" />

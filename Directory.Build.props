@@ -1,0 +1,5 @@
+<Project>
+  <PropertyGroup>
+    <RengaSdkLib Condition="'$(RengaSdkLib)' == ''">$(MSBuildThisFileDirectory)lib\</RengaSdkLib>
+  </PropertyGroup>
+</Project>

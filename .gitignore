@@ -35,3 +35,7 @@ Mapping.txt
 *.env
 credentials.json
 secrets.json
+
+# Справочные файлы Renga SDK: локальная сборка, в репозиторий не входят
+lib/*.dll
+lib/*.tlb
