@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Obfuscator>
+  <Var name="InPath" value="..\bin\Release\ViewCubeOverlay" />
+  <Var name="OutPath" value="..\bin\Release\ViewCubeOverlay\obfuscated" />
+  <Var name="KeepPublicApi" value="true" />
+  <Var name="HidePrivateApi" value="true" />
+  <Var name="RenameProperties" value="true" />
+  <Var name="RenameEvents" value="true" />
+  <Var name="RenameFields" value="true" />
+  <Var name="HideStrings" value="false" />
+  <Var name="UseUnicodeNames" value="true" />
+  <Var name="OptimizeMethods" value="true" />
+  <Var name="SuppressIldasm" value="true" />
+  <Var name="RegenerateDebugInfo" value="false" />
+  <Var name="MarkedOnly" value="false" />
+
+  <AssemblySearchPath path="$(InPath)" />
+
+  <Module file="$(InPath)\ViewCubeOverlay.dll">
+    <!-- IPlugin discovery + XAML x:Class / BAML event handlers -->
+    <SkipType name="ViewCubeOverlay\.ViewCubeOverlayPlugin" skipMethods="true" skipProperties="true" skipFields="true" skipEvents="true" />
+    <SkipType name="ViewCubeOverlay\.ViewCubeWindow" skipMethods="true" skipProperties="true" skipFields="true" skipEvents="true" />
+    <SkipType name="ViewCubeOverlay\.ViewCubeControl.*" skipMethods="true" skipProperties="true" skipFields="true" skipEvents="true" />
+    <SkipType name="ViewCubeOverlay\.SettingsWindow" skipMethods="true" skipProperties="true" skipFields="true" skipEvents="true" />
+    <SkipType name="ViewCubeOverlay\.ColorField" skipMethods="true" skipProperties="true" skipFields="true" skipEvents="true" />
+    <SkipType name="XamlGeneratedNamespace\.GeneratedInternalTypeHelper" skipMethods="true" skipProperties="true" skipFields="true" skipEvents="true" />
+  </Module>
+</Obfuscator>

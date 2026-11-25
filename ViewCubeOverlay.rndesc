@@ -1,0 +1,9 @@
+<RengaPlugin>
+	<Name>Видовой куб (окно)</Name>
+	<Version>1.5.2.0</Version>
+	<RequiredAPIVersion>2.48</RequiredAPIVersion>
+	<Vendor>Гаряев Иван Иванович</Vendor>
+	<Copyright>Разработчик: Гаряев Иван Иванович. Видовой куб — плавающее окно с 3D-кубом поверх интерфейса Renga.</Copyright>
+	<PluginFilename>ViewCubeOverlay.dll</PluginFilename>
+	<PluginType>Net8</PluginType>
+</RengaPlugin>
