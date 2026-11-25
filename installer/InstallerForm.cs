@@ -19,6 +19,7 @@ namespace ViewCubeInstaller
     internal InstallerForm()
     {
       Text = "Установка видового куба";
+      Icon = Icon.ExtractAssociatedIcon(typeof(InstallerForm).Assembly.Location);
       StartPosition = FormStartPosition.CenterScreen;
       MinimumSize = new Size(620, 470);
       Size = new Size(660, 500);
