@@ -18,36 +18,37 @@ namespace ViewCubeInstaller
     private static int Main(string[] args)
     {
       if (args.Length == 1 && args[0] == "--self-test") return SelfTest();
-      if (args.Length != 0) return 2;
       Application.EnableVisualStyles();
       Application.SetCompatibleTextRenderingDefault(false);
-      if (Process.GetProcessesByName("Renga").Length > 0)
+      if (args.Length == 2 && args[0] == "--elevated-install")
       {
-        MessageBox.Show("Закройте Renga перед установкой плагина и запустите установщик снова.", "Видовой куб", MessageBoxButtons.OK, MessageBoxIcon.Information);
-        return 1;
+        if (Process.GetProcessesByName("Renga").Length > 0) { MessageBox.Show("Закройте Renga перед установкой.", "Видовой куб", MessageBoxButtons.OK, MessageBoxIcon.Warning); return 2; }
+        try { Install(args[1]); return 0; }
+        catch (Exception ex) { MessageBox.Show("Не удалось установить плагин.\n\n" + ex.Message, "Видовой куб", MessageBoxButtons.OK, MessageBoxIcon.Error); return 1; }
       }
-      using (var dialog = new FolderBrowserDialog())
-      {
-        dialog.Description = "Выберите папку установленной Renga (в ней находится Renga.exe).";
-        dialog.ShowNewFolderButton = false;
-        string knownPath = @"C:\Soft\Renga Professional";
-        if (File.Exists(Path.Combine(knownPath, "Renga.exe"))) dialog.SelectedPath = knownPath;
-        if (dialog.ShowDialog() != DialogResult.OK) return 0;
-        try
-        {
-          Install(dialog.SelectedPath);
-          MessageBox.Show("Плагин установлен. Запустите Renga и откройте 3D-вид.", "Установка завершена", MessageBoxButtons.OK, MessageBoxIcon.Information);
-          return 0;
-        }
-        catch (Exception ex)
-        {
-          MessageBox.Show("Установка не выполнена: " + ex.Message + "\n\nЕсли доступ к папке запрещён, запустите установщик от имени администратора.", "Видовой куб", MessageBoxButtons.OK, MessageBoxIcon.Error);
-          return 1;
-        }
-      }
+      if (args.Length != 0) return 2;
+      using (var form = new InstallerForm())
+        Application.Run(form);
+      return 0;
     }
 
-    private static void Install(string rengaPath)
+    internal static string PluginVersion()
+    {
+      try
+      {
+        using (Stream payload = Assembly.GetExecutingAssembly().GetManifestResourceStream("ViewCubeInstaller.payload.zip"))
+        using (var archive = new ZipArchive(payload, ZipArchiveMode.Read))
+        using (Stream manifest = archive.GetEntry("ViewCubeOverlay.rndesc").Open())
+        {
+          var document = new System.Xml.XmlDocument();
+          document.Load(manifest);
+          return document.SelectSingleNode("/RengaPlugin/Version").InnerText;
+        }
+      }
+      catch (Exception) { return "неизвестна"; }
+    }
+
+    internal static void Install(string rengaPath)
     {
       if (!File.Exists(Path.Combine(rengaPath, "Renga.exe")))
         throw new InvalidOperationException("В выбранной папке не найден Renga.exe.");
@@ -74,6 +75,10 @@ namespace ViewCubeInstaller
           }
         }
         Directory.CreateDirectory(target);
+        // Check write permission before replacing any existing files.
+        string probe = Path.Combine(target, ".viewcube-write-" + Guid.NewGuid().ToString("N"));
+        using (FileStream test = new FileStream(probe, FileMode.CreateNew, FileAccess.Write, FileShare.None)) { }
+        File.Delete(probe);
         foreach (string name in Files)
         {
           string destination = Path.Combine(target, name);
@@ -125,6 +130,11 @@ namespace ViewCubeInstaller
       {
         Directory.CreateDirectory(root);
         File.WriteAllText(Path.Combine(root, "Renga.exe"), "test");
+        var detected = new System.Collections.Generic.List<string>();
+        RengaDiscovery.Add(detected, root);
+        RengaDiscovery.Add(detected, root + Path.DirectorySeparatorChar);
+        RengaDiscovery.Add(detected, Path.Combine(root, "not-renga"));
+        if (detected.Count != 1 || !RengaDiscovery.IsValid(detected[0])) throw new Exception("Installation detection validation failed");
         Install(root);
         string target = Path.Combine(root, "Plugins", "ViewCubeOverlay");
         foreach (string name in Files)
